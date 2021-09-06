@@ -1,0 +1,175 @@
+<html>
+
+<head>
+    <style>
+        #circle_list {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            list-style: none;
+        }
+
+        #circle_list li {
+            display: block;
+            position: absolute;
+            width: 300px;
+            height: 300px;
+        }
+
+        #circle_list li img {
+            width: 300px;
+            height: 300px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="gallery_wrapper">
+        <ul id="circle_list">
+            <li id="node1"> <img src="https://source.unsplash.com/ezSFnAFi9hY/500x500" alt="cut citrus fruits. ">Lorem
+                Ipsum</li>
+            <li> <img src="https://source.unsplash.com/TIGDsyy0TK4/500x500" alt="sliced mango. ">Dolor Sit</li>
+            <li> <img src="https://source.unsplash.com/TdDtTu2rv4s/500x500" alt="a bunch of blueberries. ">Amet
+                Consectetur
+            </li>
+            <li> <img src="https://source.unsplash.com/eudGUrDdBB0/500x500"
+                    alt="a pineapple sitting on a table. ">Adipiscing Elit</li>
+            <li> <img src="https://source.unsplash.com/eJH4f1rlG7g/500x500" alt="frozen raspberries. "> Nunc Tortor
+            </li>
+            <li> <img src="https://source.unsplash.com/24RUrLSW1HI/500x500" alt="a sliced strawberry. ">Metus Mollis
+            </li>
+            <li> <img src="https://source.unsplash.com/h5yMpgOI5nI/500x500"
+                    alt="an arrangement of assorted sliced fruits. ">Congue Sagittis</li>
+            <li> <img src="https://source.unsplash.com/2TYrR2IB72s/500x500" alt="sliced watermelons. ">Vestibulum Et
+            </li>
+            <li> <img src="https://source.unsplash.com/1cWZgnBhZRs/500x500"
+                    alt="grapefruits, lemons, and pomegranates. ">Donec Eget</li>
+            <li> <img src="https://source.unsplash.com/9aOswReDKPo/500x500" alt="half of an avocado. ">Maecenas et Justo
+            </li>
+            <li> <img src="https://source.unsplash.com/Nl7eLS8E2Ss/500x500" alt="half of a lime. ">Malesuada Quam</li>
+            <li> <img src="https://source.unsplash.com/3HhXWJzG5Ko/500x500" alt="a single cherry with stem. ">Ultricies
+                Sollicitudin
+            </li>
+            <li> <img src="https://source.unsplash.com/fczCr7MdE7U/500x500" alt="a bunch of bananas. ">Gravida Nibh</li>
+            <li> <img src="https://source.unsplash.com/uI900SItAyY/500x500" alt="three pears. ">Pellentesque Sapien</li>
+            <li> <img src="https://source.unsplash.com/0AynZdszfz0/500x500"
+                    alt="a basket full of peaches next to a plate with sliced peaches. ">Suspendisse Vel</li>
+            <li> <img src="https://source.unsplash.com/C6JhUKs9q8M/500x500" alt="a bowl of avocados. ">Mauris
+                Consectetur
+            </li>
+        </ul>
+    </div>
+    <script>
+        var radius = 300;
+        var angleSteps = 360 / document.getElementsByTagName("li").length;
+        var baseAngle = 0;
+        var center = window.innerWidth / 2;
+
+        function updateListPositions() {
+            var all = document.getElementsByTagName("li");
+
+            for (var i = 0, max = all.length; i < max; i++) {
+                // Do something with the element here
+                var angle = baseAngle + (i * angleSteps);
+                var distance = window.innerWidth / 3;
+                var x = (distance) * Math.cos(angle * (Math.PI / 180));
+                var y = (distance) * Math.sin(angle * (Math.PI / 180));
+                all[i].style.left = center + x;
+                all[i].style.top = center + y;
+                all[i].style.transform = "rotate(" + (angle + 90) + "deg)";
+            }
+        }
+
+        stepAngle(0);
+
+        //var stepInterval = setInterval(stepAngle, 25000);
+
+        function stepAngle(ang) {
+            baseAngle += ang;
+            updateListPositions();
+        }
+
+        const slider = document.querySelector('#circle_list');
+        let isDown = false;
+        let startX, startY;
+        let scrollLeft;
+
+        slider.addEventListener('mousedown', (e) => {
+            isDown = true;
+            slider.classList.add('active');
+            startX = e.pageX - slider.offsetLeft;
+            startY = e.pageY - slider.offsetTop;
+            scrollLeft = slider.scrollLeft;
+            cancelMomentumTracking();
+        });
+
+
+        slider.addEventListener('mouseleave', () => {
+            isDown = false;
+            slider.classList.remove('active');
+        });
+
+
+        slider.addEventListener('mouseup', () => {
+            isDown = false;
+            slider.classList.remove('active');
+            beginMomentumTracking();
+        });
+
+
+        slider.addEventListener('mousemove', (e) => {
+            if (!isDown) return;
+            e.preventDefault();
+            const x = e.pageX - slider.offsetLeft;
+            const y = e.pageY - slider.offsetTop;
+            const len = Math.sqrt((x - startX), (y - startY));
+            const alpha = getAngle(startX, startY, x, y);
+            const walk = alpha * 3; //scroll-fast
+            startX = x, startY = y;
+            velX = alpha * 3;
+        });
+
+        function calcHypotenuse(a, b) {
+            return (Math.sqrt((a * a) + (b * b)));
+        }
+
+        function getAngle(x, y, x1, y1) {
+            var vector = (x - center) * (y1 - center) - (y - center) * (x1 - center);
+            vector /= calcHypotenuse((x - center) , (y - center));
+            vector /= calcHypotenuse((x1 - center) , (y1 - center));
+            return Math.asin(vector) * 90 / Math.asin(1);
+        }
+        // Momentum 
+
+        var velX = 0;
+        var momentumID;
+
+        slider.addEventListener('wheel', (e) => {
+            cancelMomentumTracking();
+        });
+
+        function beginMomentumTracking() {
+            cancelMomentumTracking();
+            momentumID = requestAnimationFrame(momentumLoop);
+        }
+
+        function cancelMomentumTracking() {
+            cancelAnimationFrame(momentumID);
+        }
+
+        function momentumLoop() {
+            stepAngle(velX);
+            velX *= 0.95;
+            if (Math.abs(velX) > 0.2) {
+                momentumID = requestAnimationFrame(momentumLoop);
+            }else{
+                flag = (baseAngle % angleSteps) * 2 > angleSteps? 1:0;                
+                cnt = parseInt(baseAngle / angleSteps);
+                baseAngle = angleSteps * (cnt + flag * (cnt > 0? -1:1));
+                updateListPositions();
+            }        
+        }
+    </script>
+</body>
+
+</html>
