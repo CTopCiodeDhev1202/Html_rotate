@@ -71,7 +71,7 @@
             for (var i = 0, max = all.length; i < max; i++) {
                 // Do something with the element here
                 var angle = baseAngle + (i * angleSteps);
-                var distance = window.innerWidth / 3;
+                var distance = window.innerWidth / 2;
                 var x = (distance) * Math.cos(angle * (Math.PI / 180));
                 var y = (distance) * Math.sin(angle * (Math.PI / 180));
                 all[i].style.left = center + x;
@@ -163,9 +163,14 @@
             if (Math.abs(velX) > 0.2) {
                 momentumID = requestAnimationFrame(momentumLoop);
             }else{
-                flag = (baseAngle % angleSteps) * 2 > angleSteps? 1:0;                
                 cnt = parseInt(baseAngle / angleSteps);
-                baseAngle = angleSteps * (cnt + flag * (cnt > 0? -1:1));
+                if (velX < 0){
+                    flag = ((baseAngle % angleSteps + angleSteps) % angleSteps)  * 2 > angleSteps? 0:1;
+                }else{
+                    flag = ((baseAngle % angleSteps + angleSteps) % angleSteps)  * 2 > angleSteps? 1:0;
+                }
+                
+                baseAngle = angleSteps * (cnt + flag * (cnt > 0? 1:-1));
                 updateListPositions();
             }        
         }
