@@ -162,12 +162,11 @@
     let startX;
     let scrollLeft;
     let item_width = document.getElementById("swipe").children[0].offsetWidth + parseInt(style.marginLeft) + parseInt(style.marginRight) + 4;
-    let fix_width = new Array(2);
+    let max_width = item_width * document.getElementById("swipe").childElementCount - document.getElementById("swipe").offsetWidth - 5;
+    let fix_width = new Array(2);    
     fix_width[0] = (item_width - document.getElementById("swipe").offsetWidth % item_width) / 2;
     fix_width[1] = item_width - (document.getElementById("swipe").offsetWidth % item_width) / 2;
 
-    console.log(fix_width);
-    
     slider.addEventListener('mousedown', (e) => {
         isDown = true;
         slider.classList.add('active');
@@ -224,9 +223,9 @@
         if (Math.abs(velX) > 0.5) {
             momentumID = requestAnimationFrame(momentumLoop);
         } else {            
-            //momentum scrolling is ended.            
+            //momentum scrolling is ended.  
             cnt = parseInt(slider.scrollLeft / item_width);            
-            if (cnt == 0 || cnt == 15) return;
+            if (slider.scrollLeft == 0 || slider.scrollLeft == max_width) return;
 
             leave_width = slider.scrollLeft % item_width;
             flag = (parseInt(fix_width[0]) + parseInt(fix_width[1])) / 2 > leave_width? 0:1;
