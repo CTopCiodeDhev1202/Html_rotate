@@ -165,6 +165,8 @@
     let fix_width = new Array(2);
     fix_width[0] = (item_width - document.getElementById("swipe").offsetWidth % item_width) / 2;
     fix_width[1] = item_width - (document.getElementById("swipe").offsetWidth % item_width) / 2;
+
+    console.log(fix_width);
     
     slider.addEventListener('mousedown', (e) => {
         isDown = true;
@@ -227,9 +229,7 @@
             if (cnt == 0 || cnt == 15) return;
 
             leave_width = slider.scrollLeft % item_width;
-            console.log(leave_width);
-            flag = (parseInt(fix_width[0]) + parseInt(fix_width[1])) / 2 > leave_width? 1:0;
-            console.log(flag);
+            flag = (parseInt(fix_width[0]) + parseInt(fix_width[1])) / 2 > leave_width? 0:1;
             slider.scrollLeft = cnt * parseInt(item_width) + parseInt(fix_width[flag]);
         }
     }
